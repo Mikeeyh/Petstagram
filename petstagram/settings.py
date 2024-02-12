@@ -101,6 +101,8 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = BASE_DIR / 'mediafiles'  # for our model PetPhoto to upload the photos in 'mediafiles'
 
+MEDIA_URL = '/media/'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGGING = {
