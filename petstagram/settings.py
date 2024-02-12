@@ -6,9 +6,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jmh7*h(np%%k@_-(@=u+%ze*^mkh6encx8x2bwkvmh!!plk^4s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # to see 404.html in browser it should be on debug FALSE
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',  # for 404.html we add this too
+]
 
 INSTALLED_APPS = [
     # Django Apps
@@ -97,4 +99,28 @@ STATICFILES_DIRS = (
     BASE_DIR / 'staticfiles',
 )
 
+MEDIA_ROOT = BASE_DIR / 'mediafiles'  # for our model PetPhoto to upload the photos in 'mediafiles'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}

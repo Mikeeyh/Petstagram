@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+from petstagram.common.models import PhotoLike
+from petstagram.photos.models import PetPhoto
+
 
 def create_photo(request):
     context = {}
@@ -7,7 +10,9 @@ def create_photo(request):
 
 
 def details_photo(request, pk):
-    context = {}
+    context = {
+        'pet_photo': PetPhoto.objects.get(pk=pk),
+    }
     return render(request, "photos/details_photo.html", context)
 
 
