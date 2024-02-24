@@ -7,7 +7,7 @@
     
         <!-- Start Add Pet Form -->
         <form action="{% url 'create pet' %}" method="post">
-            {{ pet_form.as_p }}
+            {{ form.as_p }}
             
             <!-- Add Pet Button -->
             <button class="add-btn" type="submit">Add Pet</button>
