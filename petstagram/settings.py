@@ -1,12 +1,14 @@
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 # BASE_DIR should always point to the 'manage.py' directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-jmh7*h(np%%k@_-(@=u+%ze*^mkh6encx8x2bwkvmh!!plk^4s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # to see 404.html in browser it should be on debug FALSE
+DEBUG = False  # to see 404.html in browser it should be on debug FALSE
 
 ALLOWED_HOSTS = [
     'localhost',  # for 404.html we add this too
@@ -126,3 +128,10 @@ LOGGING = {
         }
     }
 }
+
+AUTH_USER_MODEL = 'accounts.PetstagramUser'  # giving the path to the our custom user
+
+LOGIN_REDIRECT_URL = reverse_lazy('index')
+LOGIN_URL = reverse_lazy('signin user')
+
+LOGOUT_REDIRECT_URL = reverse_lazy('index')

@@ -1,11 +1,14 @@
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.views import generic as views
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView
 
+from petstagram.core.view_mixins import OwnerRequiredMixin
 from petstagram.pets.forms import PetCreateForm, PetEditForm, PetDeleteForm
 from petstagram.pets.models import Pet
 
+from django.contrib.auth import mixins as auth_mixin
 
 # def create_pet(request):
 #     pet_form = PetCreateForm(request.POST or None)
@@ -30,7 +33,7 @@ Adding get_success_url(self) using the redirect url from FBV, but giving usernam
 """
 
 
-class PetCreateView(views.CreateView):
+class PetCreateView(auth_mixin.LoginRequiredMixin, views.CreateView):
     # model = Pet
     # fields = ('name', 'date_of_birth', 'pet_photo')
 
@@ -43,6 +46,17 @@ class PetCreateView(views.CreateView):
             "pet_slug": self.object.slug,
         })
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.user = self.request.user
+        return super().form_valid(form)
+
+    # Same as 'form_valid':
+    # def get_form(self, form_class=None):
+    #     form = super().get_form(form_class=form_class)
+    #
+    #     form.instance.user = self.request.user
+    #     return form
 
 # def edit_pet(request, username, pet_slug):
 #     pet = Pet.objects.filter(slug=pet_slug).get()  # To give it in our context and write 'pet_slug=pet.slug' in html
@@ -63,6 +77,7 @@ class PetCreateView(views.CreateView):
 #     }
 #     return render(request, 'pets/edit_pet.html', context)
 
+
 """ 
 Recreating 'edit_pet' view with CBV instead of FBV. 
 Updating urls.py
@@ -81,7 +96,18 @@ Adding get_context_data() to take our 'username'
 """
 
 
-class PetEditView(views.UpdateView):
+# class OwnerRequiredMixin: # (if we do not move this code in other directory)
+#
+#     def get_object(self, queryset=None):  # This does not allow other user to edit the pet
+#         obj = super().get_object(queryset=queryset)
+#
+#         if not self.request.user.is_authenticated \
+#                 or obj.user != self.request.user:
+#             raise PermissionDenied
+#         return obj
+
+
+class PetEditView(OwnerRequiredMixin, auth_mixin.LoginRequiredMixin, views.UpdateView):
     model = Pet  # queryset = Pet.objects.all() -> Here we should add this line because we need to take the exact pet.
     form_class = PetEditForm
     template_name = 'pets/edit_pet.html'
@@ -123,7 +149,7 @@ But we take queryset using prefetch to take the Pet with its details
 """
 
 
-class PetDetailView(views.DetailView):
+class PetDetailView(auth_mixin.LoginRequiredMixin, views.DetailView):
     # model = Pet  # or queryset
 
     queryset = Pet.objects.all()  \
@@ -170,7 +196,7 @@ Adding get_form_kwargs() or get_context_data() to see the details of the pet on 
 """
 
 
-class PetDeleteView(views.DeleteView):
+class PetDeleteView(auth_mixin.LoginRequiredMixin, views.DeleteView):
     model = Pet
     template_name = 'pets/delete_pet.html'
     form_class = PetDeleteForm
