@@ -25,6 +25,23 @@ from petstagram.accounts.models import Profile
 #             return self.handle_no_permission()
 #         return super().dispatch(request, *args, **kwargs)
 
+# class OwnerRequiredMixin(AccessMixin):
+#     """Verify that the current user has this profile."""
+#
+#     def _handle_no_permission(self):
+#         object = super().get_object()
+#
+#         if not self.request.user.is_authenticated or object.user != self.request.user:
+#             return self.handle_no_permission()
+#
+#     def get(self, *args, **kwargs):
+#         return self._handle_no_permission() or \
+#             super().get(*args, **kwargs)
+#
+#     def post(self, *args, **kwargs):
+#         return self._handle_no_permission() or \
+#             super().post(*args, **kwargs)
+
 
 class SignInUserView(auth_views.LoginView):
     template_name = "accounts/signin_user.html"

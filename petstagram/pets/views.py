@@ -42,21 +42,22 @@ class PetCreateView(auth_mixin.LoginRequiredMixin, views.CreateView):
 
     def get_success_url(self):
         return reverse('details pet', kwargs={
-            "username": "mike",
+            # "username": "mike",
+            "username": self.object.user.email,
             "pet_slug": self.object.slug,
         })
 
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.user = self.request.user
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     instance = form.save(commit=False)
+    #     instance.user = self.request.user
+    #     return super().form_valid(form)
 
     # Same as 'form_valid':
-    # def get_form(self, form_class=None):
-    #     form = super().get_form(form_class=form_class)
-    #
-    #     form.instance.user = self.request.user
-    #     return form
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+
+        form.instance.user = self.request.user
+        return form
 
 # def edit_pet(request, username, pet_slug):
 #     pet = Pet.objects.filter(slug=pet_slug).get()  # To give it in our context and write 'pet_slug=pet.slug' in html
@@ -111,6 +112,7 @@ class PetEditView(OwnerRequiredMixin, auth_mixin.LoginRequiredMixin, views.Updat
     model = Pet  # queryset = Pet.objects.all() -> Here we should add this line because we need to take the exact pet.
     form_class = PetEditForm
     template_name = 'pets/edit_pet.html'
+
     slug_url_kwarg = "pet_slug"
 
     def get_context_data(self, **kwargs):
